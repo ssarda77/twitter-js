@@ -25,7 +25,13 @@ var fs = require('fs');
 router.get('/', function (req, res) {
   
   var tweets = tweetBank.list();
-  res.render( 'index', { title: 'Twitter.js', tweets: tweets } );
+  res.render( 'index', { title: 'Welcome to Twitter.js', tweets: tweets } );
+});
+
+router.get('/users/:name', function(req, res) {
+  var name = req.params.name;
+  var list = tweetBank.find( {name: name} );
+  res.render( 'index', { title: 'Twitter.js - Posts by '+name, tweets: list } );
 });
 
 // router.get('/stylesheets/style.css', function(req, res) {

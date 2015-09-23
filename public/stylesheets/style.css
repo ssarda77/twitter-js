@@ -41,6 +41,10 @@ code {
   font-size: 80%;
 }
 
+ul.tweetlist {
+  list-style-image: url(../images/fs2.png);
+}
+
 .tweetbox {
   padding: 7px;
 }
