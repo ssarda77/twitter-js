@@ -5,37 +5,29 @@ var tweetBank = require('../tweetBank');
 
 var fs = require('fs');
 
+module.exports = function(io) {
+	router.get('/', function (req, res) {
+	  
+	  var tweets = tweetBank.list();
+	  res.render( 'index', { title: 'Welcome to Twitter.js', tweets: tweets, showForm: true,
+	  profile: false } );
+	});
 
+	router.get('/users/:name', function(req, res) {
+	  var name = req.params.name;
+	  var list = tweetBank.find( {name: name} );
+	  res.render( 'index', { title: 'Twitter.js - Posts by '+name, tweets: list, 
+	  	showForm: true, name: name, profile: true } );
+	});
 
-// router.use(function(req,res,next) {
-//   var path = req.path;
-//   console.log('path: ' + __dirname + '/public' + path);
-//   fs.stat(__dirname + '/public' + path, function(err, stats) {
-//   	if(!err) {
-//   		console.log('no error in stat');
-//   		res.sendFile(__dirname + '/public' + path);
-//   	} else {
-//   		next();
-//   	}
-//   });
-// });
+	router.post('/submit', function(req, res) {
+	  var name = req.body.name;
+	  var text = req.body.text;
+	  tweetBank.add(name, text);
+	  io.sockets.emit('new_tweet', { name: name, text: text });
+	  
+	  // res.redirect('/');
+	});
 
-
-
-router.get('/', function (req, res) {
-  
-  var tweets = tweetBank.list();
-  res.render( 'index', { title: 'Welcome to Twitter.js', tweets: tweets } );
-});
-
-router.get('/users/:name', function(req, res) {
-  var name = req.params.name;
-  var list = tweetBank.find( {name: name} );
-  res.render( 'index', { title: 'Twitter.js - Posts by '+name, tweets: list } );
-});
-
-// router.get('/stylesheets/style.css', function(req, res) {
-// 	res.sendFile('/Users/mbingber/Desktop/Fullstack/week2/twitter-js/public/stylesheets/style.css');
-// });
-
-module.exports = router;
+	return router;
+}
